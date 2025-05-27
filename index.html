@@ -236,9 +236,7 @@
 
         /* 轉盤動畫的CSS */
         #wheelCanvas.spinning {
-            /* 調整為一個更平滑的加速和減速曲線，通常是 ease-out 或 custom cubic-bezier */
-            /* 這裡使用 ease-out 模擬逐漸減速 */
-            transition: transform var(--spin-duration) cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: transform var(--spin-duration) cubic-bezier(0.1, 0.5, 0, 1);
             transform: rotate(var(--end-rotation));
         }
         
@@ -449,7 +447,7 @@
         let entries = [];
         let isSpinning = false;
         let lastHighlightedSliceIndex = -1;
-        let currentRotationOffset = 0; // 追蹤當前累積的旋轉角度偏移
+        let currentRotationOffset = 0; // 追蹤轉盤當前絕對的旋轉角度，以度為單位
 
         const colors = [
             '#FF6347', '#4682B4', '#3CB371', '#FFD700', '#DA70D6',
@@ -515,15 +513,17 @@
                 return;
             }
 
-            let startAngle = -0.5 * Math.PI; // 指針朝上，從-90度開始
+            // 指針在頂部，對應 Canvas 上的 -0.5 * Math.PI (或 270 度)
+            // 扇區繪製從這個角度開始，然後順時針。
+            let currentAngleRad = -0.5 * Math.PI; 
 
             entries.forEach((entry, i) => {
-                const angle = (entry.value / totalValue) * Math.PI * 2;
+                const angleRad = (entry.value / totalValue) * Math.PI * 2; // 扇區角度（弧度）
                 const color = colors[i % colors.length];
 
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, startAngle + angle);
+                ctx.arc(centerX, centerY, radius, currentAngleRad, currentAngleRad + angleRad);
                 ctx.closePath();
                 ctx.fillStyle = color;
                 ctx.fill();
@@ -535,7 +535,7 @@
                     ctx.save();
                     ctx.beginPath();
                     ctx.moveTo(centerX, centerY);
-                    ctx.arc(centerX, centerY, radius, startAngle, startAngle + angle);
+                    ctx.arc(centerX, centerY, radius, currentAngleRad, currentAngleRad + angleRad);
                     ctx.closePath();
                     ctx.strokeStyle = 'gold';
                     ctx.lineWidth = 8;
@@ -546,14 +546,12 @@
                 ctx.save();
                 ctx.translate(centerX, centerY);
                 
-                // **修正2: 文字旋轉 90 度，使其朝下**
-                // 原本是旋轉到區塊中心，現在在此基礎上額外旋轉 90 度 (Math.PI / 2)
-                ctx.rotate(startAngle + angle / 2 + Math.PI / 2); 
+                // 計算文字的旋轉角度：扇區的中心角度 + 額外 90 度，使文字垂直顯示
+                // 因為扇區是從 -90 度開始繪製的，所以中心點就是 (currentAngleRad + angleRad / 2)
+                // 為了讓文字是「朝下」的，我們需要在這個基礎上再加 90 度 (Math.PI / 2)
+                ctx.rotate(currentAngleRad + angleRad / 2 + Math.PI / 2); 
                 
-                // 由於文字旋轉了，所以 `textAlign` 需要調整
-                // 如果文字從圓心向外，旋轉90度後應該是 `center` 或 `left/right`
-                // 這裡我們想讓文字在扇形內部居中，所以保持 `center`，但要調整 `fillText` 的 y 軸位置
-                ctx.textAlign = "center"; // 文字居中
+                ctx.textAlign = "center"; 
                 ctx.fillStyle = "white";
 
                 let baseFontSize = radius * 0.08;
@@ -561,20 +559,16 @@
 
                 ctx.font = `bold ${fontSize}px Arial`;
                 let textWidth = ctx.measureText(entry.text).width;
-                // 調整文字適應邏輯，考慮到現在文字是垂直的
-                // 文字長度（寬度）應該適應扇形的高度（半徑 - 扇形內邊距）
-                const maxTextLength = radius * 0.6; // 文字距離圓心 0.4 半徑，到邊緣還有 0.6 半徑空間
+                const maxTextLength = radius * 0.6; 
                 while (textWidth > maxTextLength && fontSize > (radius * 0.03)) {
                     fontSize--;
                     ctx.font = `bold ${fontSize}px Arial`;
                     textWidth = ctx.measureText(entry.text).width;
                 }
-                // 繪製文字，調整位置。現在文字是垂直的，所以 x 保持 0，y 調整為正值（向下）
-                // 讓文字從圓心向外，位於扇形的大約中間位置
-                ctx.fillText(entry.text, 0, -radius * 0.7); // 調整 Y 軸位置，使其在扇形內部，距離圓心約 0.7 半徑
+                ctx.fillText(entry.text, 0, -radius * 0.7); 
                 ctx.restore();
 
-                startAngle += angle;
+                currentAngleRad += angleRad; // 更新下一個扇區的起始角度
             });
         }
 
@@ -595,27 +589,90 @@
             const spinCount = parseInt(spinCountInput.value) || 5;
             const spinDuration = parseFloat(spinDurationInput.value) || 5;
 
-            const segmentAngles = entries.map(entry => (entry.value / totalValue) * 360);
+            // 計算每個區塊的起始角度和結束角度（以度為單位，相對指針頂部 0 度順時針）
+            const segmentAnglesDegrees = []; // 每個扇區的弧度
+            let cumulativeAngle = 0; // 累積角度
+            const sectorData = []; // 儲存每個扇區的 (start, end, index)
 
+            entries.forEach((entry, i) => {
+                const angle = (entry.value / totalValue) * 360; // 扇區角度（度）
+                const startAngle = cumulativeAngle;
+                const endAngle = cumulativeAngle + angle;
+                sectorData.push({ start: startAngle, end: endAngle, index: i });
+                segmentAnglesDegrees.push(angle);
+                cumulativeAngle += angle;
+            });
+
+            // 隨機選擇一個目標區塊的索引
             let randomValue = Math.random() * totalValue;
             let targetIndex = -1;
-            let cumulativeValue = 0;
+            let currentCumulativeValue = 0;
             for (let i = 0; i < entries.length; i++) {
-                cumulativeValue += entries[i].value;
-                if (randomValue < cumulativeValue) {
+                currentCumulativeValue += entries[i].value;
+                if (randomValue < currentCumulativeValue) {
                     targetIndex = i;
                     break;
                 }
             }
 
-            let stopAngleDeg = 0;
+            // 計算目標區塊的中心角度（以度為單位，從轉盤頂部0度順時針）
+            // 這是指針應該對準的轉盤上的角度
+            let targetCenterAngleOfSegment = 0;
             for (let i = 0; i < targetIndex; i++) {
-                stopAngleDeg += segmentAngles[i];
+                targetCenterAngleOfSegment += segmentAnglesDegrees[i];
             }
-            stopAngleDeg += segmentAngles[targetIndex] / 2;
+            targetCenterAngleOfSegment += segmentAnglesDegrees[targetIndex] / 2;
 
-            // 計算最終目標旋轉角度 (絕對值)
-            const finalRotationDegrees = currentRotationOffset + (spinCount * 360) + (360 - stopAngleDeg);
+            // **修正核心：計算最終的停止角度**
+            // 
+            // 1. 指針固定在轉盤的「頂部中央」。
+            // 2. 轉盤繪製時，0度角在右側，頂部指針對應 Canvas 的 -90度 (或 270度)。
+            // 3. 我們希望轉盤旋轉後，選中的區塊中心 (targetCenterAngleOfSegment) 能夠轉到指針的位置。
+            // 
+            // 讓指針指向目標區塊的中心點。
+            // 考慮到指針在頂部（0度），轉盤繪製時 0 度是右邊。
+            // 我們需要轉動轉盤，使得 `targetCenterAngleOfSegment` (以右側為0度計算的) 最終落在指針下方，也就是 90 度的位置。
+            // 或者，等價地說，讓指針（0度）與目標區塊中心對齊。
+            // 目標：轉盤最終停止時，讓 `targetCenterAngleOfSegment` 對準指針。
+            // 轉盤會逆時針旋轉。
+            // 例如：如果目標區塊中心在 45 度 (右偏)，我們需要轉動轉盤 `-(45)` 度才能讓它對準指針。
+            // 然後加上多圈數。
+
+            // 最終的停止角度（以度為單位），這是 CSS transform 實際會應用到的角度。
+            // 這個角度是從轉盤當前靜止位置 (currentRotationOffset) 加上需要的額外旋轉量。
+            // 額外旋轉量 = (旋轉圈數 * 360) + (讓目標區塊對準指針的精確度數)
+            // 讓目標區塊中心對準指針的精確度數 = 360 - (targetCenterAngleOfSegment + 90) % 360 + (360 - (targetCenterAngleOfSegment + currentRotationOffset) % 360) % 360
+            // 更簡潔且正確的計算方式：
+            // 需要旋轉的角度 = (旋轉圈數 * 360) + (使目標區塊中心對準指針的角度)。
+            // 指針在轉盤 0 度 (上方)。
+            // 我們希望轉盤旋轉到 `targetCenterAngleOfSegment` 落在 0 度。
+            // 也就是轉盤要轉動 `(360 - targetCenterAngleOfSegment)` 度。
+            // 例如：目標區塊中心在 45 度。轉盤要轉 315 度才會停在指針。
+            // 我們要考慮當前轉盤的起始偏移。
+            // 最終目標旋轉角度 (絕對值)
+            // 目標是讓 `targetCenterAngleOfSegment` 對準 0 度（指針位置）。
+            // 則需要轉動 (360 - targetCenterAngleOfSegment) 度。
+            // 再加上多圈數。
+            let rotationNeededForAlignment = (360 - targetCenterAngleOfSegment) % 360;
+
+            // 考慮到 currentRotationOffset，如果 currentRotationOffset 已經使得 alignment 不足，則需要補足。
+            // 這裡直接計算一個絕對的總轉動角度，確保每次都從視覺上的當前位置開始轉。
+            // 我們希望最終停在一個角度 `X`，使得 `X % 360` 對應到 `rotationNeededForAlignment`。
+            // 總轉動 = 當前累積角度 + 至少多轉 `spinCount` 圈 + 額外精準停止角度
+            let finalRotationDegrees = currentRotationOffset + (spinCount * 360) + rotationNeededForAlignment;
+
+            // 如果計算出的 `finalRotationDegrees` 比 `currentRotationOffset` 還小，說明我們算錯了或少了一圈
+            // 這是為了處理 `currentRotationOffset` 已經超過 `rotationNeededForAlignment` 的情況
+            // 例如 currentRotationOffset=300, rotationNeededForAlignment=10
+            // finalRotation = 300 + 5*360 + 10 = 2110
+            // 2110 % 360 = 310 (結果不是 10)
+            // 我們需要確保最終停止角度 `finalRotationDegrees` 模 360 後，能夠落在 `rotationNeededForAlignment`。
+            // 最簡單的做法是，確保 `finalRotationDegrees` 比 `currentRotationOffset` 至少大 `360` 度。
+            // 確保旋轉至少一圈以上：
+            while (finalRotationDegrees <= currentRotationOffset + 360) {
+                finalRotationDegrees += 360;
+            }
+
 
             // 清除之前的 transition 樣式，並立即設定為當前視覺上的角度
             canvas.style.transition = 'none'; 
@@ -623,15 +680,6 @@
             
             void canvas.offsetWidth; // 強制瀏覽器重繪
 
-            // **修正1: 轉速放慢，使用 cubic-bezier 調整動畫曲線**
-            // cubic-bezier(x1, y1, x2, y2)
-            // (0, 0) 是開始點，(1, 1) 是結束點。
-            // 這裡使用 (0.25, 0.1, 0.25, 1) 是一個常用的 ease-out 曲線，
-            // 已經能提供不錯的減速感，但如果需要更明顯的最後一秒減速，可以調整為：
-            // 例如：cubic-bezier(0.1, 0.7, 0, 1) 會在結束時減速更劇烈
-            // 或者：cubic-bezier(0.1, 0.5, 0, 1)
-            // 我這裡維持一個標準的 ease-out (0.25, 0.1, 0.25, 1)，因為它在視覺上通常很流暢。
-            // 更精細的最後一秒減速可能需要分段動畫，這會使程式碼更複雜。
             const easeOutCubicBezier = 'cubic-bezier(0.1, 0.5, 0, 1)'; 
 
             canvas.style.setProperty('--spin-duration', `${spinDuration}s`);
@@ -645,21 +693,58 @@
             setTimeout(() => {
                 isSpinning = false;
                 spinButton.disabled = false;
-                const resultText = entries[targetIndex].text;
+                
+                // 計算最終停止時，轉盤相對於指針的實際角度 (0-360度)
+                // 指針在 0 度，轉盤轉動 `finalRotationDegrees` 度後，
+                // 我們要看指針指向哪個區塊。
+                // 實際的轉盤停止角度 (模 360)
+                let actualStopAngle = finalRotationDegrees % 360;
+                if (actualStopAngle < 0) actualStopAngle += 360;
 
-                highlightSlice(targetIndex);
-                lastHighlightedSliceIndex = targetIndex;
+                // 找到與 `actualStopAngle` 對應的區塊
+                let winningIndex = -1;
+                let currentAngleForWinningCheck = 0; // 以 0 度為起始，順時針計算
+                for (let i = 0; i < sectorData.length; i++) {
+                    const sector = sectorData[i];
+                    // 指針指向 0 度，我們要找到 0 度落在哪個扇區的範圍內
+                    // 注意：扇區範圍是 [start, end)
+                    // 如果指針指向 0 度，那麼我們需要找到一個扇區，其範圍包含 (360 - actualStopAngle + 0) % 360
+                    // 這裡的邏輯是反過來的：我們知道轉盤最終停在哪個絕對角度，
+                    // 然後看這個絕對角度與每個區塊的相對位置。
+                    // 為了方便判斷，我們可以將指針的「0度」位置看作是目標區塊的中點。
+                    // 或者，更直接地，將 `actualStopAngle` 進行偏移，使其與扇區的繪製角度基準一致。
+                    
+                    // 最簡單的方式是：將 `actualStopAngle` 逆轉回來，看它落在哪個區塊的範圍內。
+                    // 因為轉盤是逆時針旋轉的，所以指針指向的是轉盤的 "actualStopAngle" 角度。
+                    // 但是我們的扇區是從指針位置 (0度) 順時針繪製的。
+                    // 所以我們需要計算出指針所指的「相對扇區角度」。
+                    
+                    // 指針的絕對位置是 0 度 (正上方)。
+                    // 轉盤最終停在 `actualStopAngle` 度。
+                    // 我們需要將 `actualStopAngle` 反轉過來，才能與扇區的順時針角度對應。
+                    // 例如，轉盤轉了 315 度，停在 315 度。指針在 0 度。
+                    // 那麼指針其實是落在轉盤的 (0 - 315) = -315 = 45 度位置。
+                    // 因此，指針所指的相對角度是 (360 - actualStopAngle) % 360。
+                    let pointerRelativeAngle = (360 - actualStopAngle + 360) % 360; // 確保為正值
+
+                    if (pointerRelativeAngle >= sector.start && pointerRelativeAngle < sector.end) {
+                        winningIndex = sector.index;
+                        break;
+                    }
+                }
+
+                const resultText = entries[winningIndex].text;
+
+                highlightSlice(winningIndex);
+                lastHighlightedSliceIndex = winningIndex;
 
                 showResultModal(resultText);
                 throwConfetti();
 
-                // 更新當前累積旋轉偏移量
-                currentRotationOffset = finalRotationDegrees % 360; 
-                if (currentRotationOffset < 0) {
-                    currentRotationOffset += 360;
-                }
+                // 更新 currentRotationOffset 為實際停止的絕對角度，用於下一次旋轉的起始點
+                currentRotationOffset = actualStopAngle; 
                 canvas.style.transform = `rotate(${currentRotationOffset}deg)`;
-                canvas.style.transition = 'none'; 
+                canvas.style.transition = 'none'; // 移除 transition 樣式，防止回到原始狀態
                 
             }, spinDuration * 1000);
         }
@@ -720,7 +805,12 @@
             if (event.target === resultModal) {
                 closeModal();
             }
+            // 避免點擊模態框內容關閉模態框
+            if (event.target === resultModal && event.target !== document.getElementById('finalResultText') && event.target !== document.querySelector('.modal-button')) {
+                closeModal();
+            }
         });
+
 
         window.addEventListener('resize', () => {
             setCanvasDimensions();
