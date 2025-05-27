@@ -28,7 +28,7 @@
             justify-content: center;
             gap: 20px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
         }
 
         .panel {
@@ -40,6 +40,13 @@
             min-width: 280px;
             max-height: calc(100vh - 100px);
             overflow-y: auto;
+            position: relative;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
         }
 
         .wheel-panel {
@@ -55,12 +62,12 @@
             width: 100%;
             max-width: 400px;
             height: auto;
-            aspect-ratio: 1 / 1; /* 保持正方形 */
+            aspect-ratio: 1 / 1;
             border: 5px solid #3498db;
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             background-color: #ecf0f1;
-            transform: rotate(0deg); /* 確保一個初始的 transform 值 */
+            transform: rotate(0deg);
         }
 
         .spin-button {
@@ -115,20 +122,23 @@
             white-space: nowrap;
         }
 
+        /* 調整輸入數值和文字框大小 */
         .entry-item input[type="number"] {
-            flex: 1;
+            width: 45px; /* 設置一個固定的較小寬度 */
             padding: 6px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            width: 60px;
-            max-width: 70px;
+            text-align: center;
+            box-sizing: border-box; /* 確保 padding 不會增加總寬度 */
         }
 
         .entry-item input[type="text"] {
-            flex: 3;
+            flex: 1; /* 佔據剩餘所有空間 */
             padding: 6px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            min-width: 80px; /* 確保在小螢幕下文字框不至於太小 */
+            box-sizing: border-box;
         }
 
         .entry-item button {
@@ -139,6 +149,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            white-space: nowrap; /* 防止刪除按鈕文字換行 */
         }
 
         .entry-item button:hover {
@@ -321,6 +332,130 @@
         .modal-button:hover {
             background-color: #2980b9;
         }
+        
+        /* 卡片面板 */
+        .card-panel {
+            flex: 1 1 300px;
+            min-width: 280px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .card-panel .reset-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #607d8b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .card-panel .reset-button:hover {
+            background-color: #455a64;
+        }
+
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .card-item {
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-item h3 {
+            color: #2e7d32;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .card-item p {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .card-use-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .card-use-button:hover {
+            background-color: #43A047;
+        }
+
+        .card-use-button:disabled {
+            background-color: #b0c9b0;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .card-item span {
+            font-weight: bold;
+            color: #00796b;
+        }
+
+        /* 卡片操作選擇器 */
+        .card-selection-modal {
+            background-color: #e0f7fa;
+            border: 1px solid #b2ebf2;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .card-selection-modal h4 {
+            color: #00796b;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .card-selection-modal select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #b2ebf2;
+            border-radius: 5px;
+        }
+        .card-selection-modal button {
+            background-color: #00bcd4;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .card-selection-modal button:hover {
+            background-color: #0097a7;
+        }
+
 
         /* 媒體查詢：針對小螢幕設備進一步調整 */
         @media (max-width: 768px) {
@@ -353,7 +488,10 @@
                 padding: 6px 10px;
             }
             .entry-item input[type="number"] {
-                width: 50px;
+                width: 40px; /* 在小螢幕下進一步縮小 */
+            }
+            .entry-item input[type="text"] {
+                min-width: 60px; /* 在小螢幕下也確保可讀性 */
             }
             .pointer {
                 border-left: 10px solid transparent;
@@ -370,12 +508,33 @@
             .modal-result-text {
                 font-size: 3em;
             }
+            .card-panel {
+                max-height: none;
+                overflow-y: visible;
+                margin-top: 15px;
+            }
+            .card-item h3 {
+                font-size: 1.2em;
+            }
+            .card-item p {
+                font-size: 0.85em;
+            }
+            .card-use-button {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+             .card-panel .reset-button {
+                top: 10px;
+                right: 10px;
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
         }
     </style>
 </head>
 <body>
 
-    <h1>自訂轉盤應用程式</h1>
+    <h1>生日轉轉樂</h1>
 
     <div class="container">
         <div class="panel controls-panel">
@@ -404,7 +563,41 @@
             </div>
             <button class="spin-button" id="spinButton">旋轉！</button>
         </div>
-    </div>
+
+        <div class="panel card-panel">
+            <h2>功能卡片夾</h2>
+            <button class="reset-button" onclick="resetCards()">重置卡片</button>
+            <div class="card-list">
+                <div class="card-item" id="respinCard">
+                    <h3>🔄 重啟轉動卡</h3>
+                    <p>轉盤停下後，再轉一次！</p>
+                    <button class="card-use-button" onclick="useRespinCard()">使用 (<span id="respinCardCount">1</span>)</button>
+                </div>
+                <div class="card-item" id="boostCard">
+                    <h3>📈 機率提升卡</h3>
+                    <p>暫時增加指定區域的機率。</p>
+                    <button class="card-use-button" onclick="useBoostCard()">使用 (<span id="boostCardCount">1</span>)</button>
+                </div>
+                <div class="card-item" id="removeCard">
+                    <h3>❌ 刪除區塊卡</h3>
+                    <p>暫時移除一個指定區塊。</p>
+                    <button class="card-use-button" onclick="useRemoveCard()">使用 (<span id="removeCardCount">1</span>)</button>
+                </div>
+            </div>
+            <div class="card-selection-modal" id="boostTargetSelection" style="display: none;">
+                <h4>選擇提升機率的區域:</h4>
+                <select id="boostTargetSelect"></select>
+                <button onclick="applyBoost()">確認提升</button>
+                <button onclick="cancelBoost()">取消</button>
+            </div>
+            <div class="card-selection-modal" id="removeTargetSelection" style="display: none;">
+                <h4>選擇要移除的區域:</h4>
+                <select id="removeTargetSelect"></select>
+                <button onclick="applyRemove()">確認移除</button>
+                <button onclick="cancelRemove()">取消</button>
+            </div>
+        </div>
+        </div>
 
     <div class="confetti-container" id="confettiContainer"></div>
 
@@ -413,7 +606,7 @@
             <span class="close-button" onclick="closeModal()">&times;</span>
             <div class="modal-title">恭喜您！</div>
             <div id="finalResultText" class="modal-result-text"></div>
-            <button class="modal-button" onclick="closeModal()">確認</button>
+            <button class="modal-button" id="modalConfirmButton" onclick="closeModal()">確認</button>
         </div>
     </div>
 
@@ -444,10 +637,32 @@
         const resultModal = document.getElementById('resultModal');
         const finalResultText = document.getElementById('finalResultText');
 
-        let entries = [];
+        // === 卡片相關 DOM 元素引用 ===
+        const respinCardCountSpan = document.getElementById('respinCardCount');
+        const boostCardCountSpan = document.getElementById('boostCardCount');
+        const removeCardCountSpan = document.getElementById('removeCardCount');
+        
+        const boostTargetSelectionDiv = document.getElementById('boostTargetSelection');
+        const boostTargetSelect = document.getElementById('boostTargetSelect');
+        
+        const removeTargetSelectionDiv = document.getElementById('removeTargetSelection');
+        const removeTargetSelect = document.getElementById('removeTargetSelect');
+
+        const modalConfirmButton = document.getElementById('modalConfirmButton'); 
+
+        // 儲存原始的 entries 狀態，以便在卡片效果結束後恢復
+        let originalEntriesState = [];
+
+        let cards = {
+            respin: { count: 1, inUse: false },
+            boost: { count: 1, inUse: false, boostedEntryId: null, originalBoostedValue: 0 }, 
+            remove: { count: 1, inUse: false, removedEntryId: null, originalRemovedValue: 0 } 
+        };
+
+        let entries = []; 
         let isSpinning = false;
         let lastHighlightedSliceIndex = -1;
-        let currentRotationOffset = 0; // 追蹤轉盤當前絕對的旋轉角度，以度為單位
+        let currentRotationOffset = 0; 
 
         const colors = [
             '#FF6347', '#4682B4', '#3CB371', '#FFD700', '#DA70D6',
@@ -464,8 +679,10 @@
                 id: `entry-${Date.now()}-${index}`
             };
             entries.push(newEntry);
+            saveOriginalEntriesState(); // 每次新增或刪除時更新原始狀態
             renderEntry(newEntry);
             drawWheel();
+            updateCardTargetSelects(); // 統一更新卡片相關的選擇列表
         }
 
         function renderEntry(entry) {
@@ -491,7 +708,9 @@
                 } else if (type === 'text') {
                     entries[entryIndex].text = value;
                 }
+                saveOriginalEntriesState(); // 每次更新時更新原始狀態
                 drawWheel();
+                updateCardTargetSelects();
             }
         }
 
@@ -502,23 +721,35 @@
             }
             entries = entries.filter(e => e.id !== id);
             document.getElementById(id).remove();
+            saveOriginalEntriesState(); // 每次新增或刪除時更新原始狀態
             drawWheel();
+            updateCardTargetSelects();
         }
 
+        // 繪製轉盤，只考慮有效（value > 0）的區域
         function drawWheel(highlightIndex = -1) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const totalValue = entries.reduce((sum, entry) => sum + entry.value, 0);
+            const activeEntries = entries.filter(entry => entry.value > 0);
+            const totalValue = activeEntries.reduce((sum, entry) => sum + entry.value, 0);
+
             if (totalValue === 0) {
+                // 如果沒有有效區域，可以顯示一個提示或保持空白
+                ctx.fillStyle = '#ccc';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#666";
+                ctx.font = `bold ${radius * 0.1}px Arial`;
+                ctx.fillText("無可選區域", centerX, centerY);
                 return;
             }
 
-            // 指針在頂部，對應 Canvas 上的 -0.5 * Math.PI (或 270 度)
-            // 扇區繪製從這個角度開始，然後順時針。
             let currentAngleRad = -0.5 * Math.PI; 
 
-            entries.forEach((entry, i) => {
-                const angleRad = (entry.value / totalValue) * Math.PI * 2; // 扇區角度（弧度）
+            activeEntries.forEach((entry, i) => {
+                const angleRad = (entry.value / totalValue) * Math.PI * 2; 
                 const color = colors[i % colors.length];
 
                 ctx.beginPath();
@@ -531,7 +762,9 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                if (i === highlightIndex) {
+                // 判斷是否需要高亮的是這個實際繪製的區塊
+                const originalIndex = entries.findIndex(e => e.id === entry.id);
+                if (originalIndex === highlightIndex) {
                     ctx.save();
                     ctx.beginPath();
                     ctx.moveTo(centerX, centerY);
@@ -545,10 +778,6 @@
 
                 ctx.save();
                 ctx.translate(centerX, centerY);
-                
-                // 計算文字的旋轉角度：扇區的中心角度 + 額外 90 度，使文字垂直顯示
-                // 因為扇區是從 -90 度開始繪製的，所以中心點就是 (currentAngleRad + angleRad / 2)
-                // 為了讓文字是「朝下」的，我們需要在這個基礎上再加 90 度 (Math.PI / 2)
                 ctx.rotate(currentAngleRad + angleRad / 2 + Math.PI / 2); 
                 
                 ctx.textAlign = "center"; 
@@ -568,16 +797,19 @@
                 ctx.fillText(entry.text, 0, -radius * 0.7); 
                 ctx.restore();
 
-                currentAngleRad += angleRad; // 更新下一個扇區的起始角度
+                currentAngleRad += angleRad; 
             });
         }
 
         function spinWheel() {
             if (isSpinning) return;
 
-            const totalValue = entries.reduce((sum, entry) => sum + entry.value, 0);
-            if (totalValue === 0 || entries.some(entry => entry.value <= 0)) {
-                alert("請至少設定一個區域，且所有區域的數值必須大於零！");
+            // 只考慮 value > 0 的 activeEntries 來進行抽獎
+            const activeEntries = entries.filter(entry => entry.value > 0);
+            const totalValueActive = activeEntries.reduce((sum, entry) => sum + entry.value, 0);
+
+            if (totalValueActive === 0) {
+                alert("沒有可供抽獎的區域！請檢查轉盤區域設定。");
                 return;
             }
 
@@ -585,168 +817,133 @@
             spinButton.disabled = true;
             removeHighlight();
             closeModal();
-
+            
             const spinCount = parseInt(spinCountInput.value) || 5;
             const spinDuration = parseFloat(spinDurationInput.value) || 5;
 
-            // 計算每個區塊的起始角度和結束角度（以度為單位，相對指針頂部 0 度順時針）
-            const segmentAnglesDegrees = []; // 每個扇區的弧度
-            let cumulativeAngle = 0; // 累積角度
-            const sectorData = []; // 儲存每個扇區的 (start, end, index)
+            const segmentAnglesDegrees = []; 
+            let cumulativeAngle = 0; 
+            const sectorData = []; 
 
-            entries.forEach((entry, i) => {
-                const angle = (entry.value / totalValue) * 360; // 扇區角度（度）
+            activeEntries.forEach((entry, i) => {
+                const angle = (entry.value / totalValueActive) * 360; 
                 const startAngle = cumulativeAngle;
                 const endAngle = cumulativeAngle + angle;
-                sectorData.push({ start: startAngle, end: endAngle, index: i });
+                sectorData.push({ start: startAngle, end: endAngle, originalEntryId: entry.id }); // 儲存原始 entry 的 ID
                 segmentAnglesDegrees.push(angle);
                 cumulativeAngle += angle;
             });
 
-            // 隨機選擇一個目標區塊的索引
-            let randomValue = Math.random() * totalValue;
-            let targetIndex = -1;
+            let randomValue = Math.random() * totalValueActive; 
+            let targetEntryId = null; 
             let currentCumulativeValue = 0;
-            for (let i = 0; i < entries.length; i++) {
-                currentCumulativeValue += entries[i].value;
+            for (let i = 0; i < activeEntries.length; i++) { 
+                currentCumulativeValue += activeEntries[i].value;
                 if (randomValue < currentCumulativeValue) {
-                    targetIndex = i;
+                    targetEntryId = activeEntries[i].id;
                     break;
                 }
             }
+            
+            // 找到目標區塊在 activeEntries 中的局部索引，用於計算角度
+            const targetLocalIndex = activeEntries.findIndex(e => e.id === targetEntryId);
 
-            // 計算目標區塊的中心角度（以度為單位，從轉盤頂部0度順時針）
-            // 這是指針應該對準的轉盤上的角度
+
             let targetCenterAngleOfSegment = 0;
-            for (let i = 0; i < targetIndex; i++) {
+            for (let i = 0; i < targetLocalIndex; i++) {
                 targetCenterAngleOfSegment += segmentAnglesDegrees[i];
             }
-            targetCenterAngleOfSegment += segmentAnglesDegrees[targetIndex] / 2;
+            targetCenterAngleOfSegment += segmentAnglesDegrees[targetLocalIndex] / 2;
 
-            // **修正核心：計算最終的停止角度**
-            // 
-            // 1. 指針固定在轉盤的「頂部中央」。
-            // 2. 轉盤繪製時，0度角在右側，頂部指針對應 Canvas 的 -90度 (或 270度)。
-            // 3. 我們希望轉盤旋轉後，選中的區塊中心 (targetCenterAngleOfSegment) 能夠轉到指針的位置。
-            // 
-            // 讓指針指向目標區塊的中心點。
-            // 考慮到指針在頂部（0度），轉盤繪製時 0 度是右邊。
-            // 我們需要轉動轉盤，使得 `targetCenterAngleOfSegment` (以右側為0度計算的) 最終落在指針下方，也就是 90 度的位置。
-            // 或者，等價地說，讓指針（0度）與目標區塊中心對齊。
-            // 目標：轉盤最終停止時，讓 `targetCenterAngleOfSegment` 對準指針。
-            // 轉盤會逆時針旋轉。
-            // 例如：如果目標區塊中心在 45 度 (右偏)，我們需要轉動轉盤 `-(45)` 度才能讓它對準指針。
-            // 然後加上多圈數。
-
-            // 最終的停止角度（以度為單位），這是 CSS transform 實際會應用到的角度。
-            // 這個角度是從轉盤當前靜止位置 (currentRotationOffset) 加上需要的額外旋轉量。
-            // 額外旋轉量 = (旋轉圈數 * 360) + (讓目標區塊對準指針的精確度數)
-            // 讓目標區塊中心對準指針的精確度數 = 360 - (targetCenterAngleOfSegment + 90) % 360 + (360 - (targetCenterAngleOfSegment + currentRotationOffset) % 360) % 360
-            // 更簡潔且正確的計算方式：
-            // 需要旋轉的角度 = (旋轉圈數 * 360) + (使目標區塊中心對準指針的角度)。
-            // 指針在轉盤 0 度 (上方)。
-            // 我們希望轉盤旋轉到 `targetCenterAngleOfSegment` 落在 0 度。
-            // 也就是轉盤要轉動 `(360 - targetCenterAngleOfSegment)` 度。
-            // 例如：目標區塊中心在 45 度。轉盤要轉 315 度才會停在指針。
-            // 我們要考慮當前轉盤的起始偏移。
-            // 最終目標旋轉角度 (絕對值)
-            // 目標是讓 `targetCenterAngleOfSegment` 對準 0 度（指針位置）。
-            // 則需要轉動 (360 - targetCenterAngleOfSegment) 度。
-            // 再加上多圈數。
             let rotationNeededForAlignment = (360 - targetCenterAngleOfSegment) % 360;
+            if (rotationNeededForAlignment < 0) rotationNeededForAlignment += 360;
 
-            // 考慮到 currentRotationOffset，如果 currentRotationOffset 已經使得 alignment 不足，則需要補足。
-            // 這裡直接計算一個絕對的總轉動角度，確保每次都從視覺上的當前位置開始轉。
-            // 我們希望最終停在一個角度 `X`，使得 `X % 360` 對應到 `rotationNeededForAlignment`。
-            // 總轉動 = 當前累積角度 + 至少多轉 `spinCount` 圈 + 額外精準停止角度
             let finalRotationDegrees = currentRotationOffset + (spinCount * 360) + rotationNeededForAlignment;
 
-            // 如果計算出的 `finalRotationDegrees` 比 `currentRotationOffset` 還小，說明我們算錯了或少了一圈
-            // 這是為了處理 `currentRotationOffset` 已經超過 `rotationNeededForAlignment` 的情況
-            // 例如 currentRotationOffset=300, rotationNeededForAlignment=10
-            // finalRotation = 300 + 5*360 + 10 = 2110
-            // 2110 % 360 = 310 (結果不是 10)
-            // 我們需要確保最終停止角度 `finalRotationDegrees` 模 360 後，能夠落在 `rotationNeededForAlignment`。
-            // 最簡單的做法是，確保 `finalRotationDegrees` 比 `currentRotationOffset` 至少大 `360` 度。
-            // 確保旋轉至少一圈以上：
             while (finalRotationDegrees <= currentRotationOffset + 360) {
                 finalRotationDegrees += 360;
             }
-
-
-            // 清除之前的 transition 樣式，並立即設定為當前視覺上的角度
+            
             canvas.style.transition = 'none'; 
             canvas.style.transform = `rotate(${currentRotationOffset}deg)`;
             
-            void canvas.offsetWidth; // 強制瀏覽器重繪
-
+            void canvas.offsetWidth; 
+            
             const easeOutCubicBezier = 'cubic-bezier(0.1, 0.5, 0, 1)'; 
 
             canvas.style.setProperty('--spin-duration', `${spinDuration}s`);
             canvas.style.setProperty('--end-rotation', `${finalRotationDegrees}deg`);
 
-            // 重新添加 transition 屬性，並應用新的動畫曲線
             canvas.style.transition = `transform var(--spin-duration) ${easeOutCubicBezier}`;
             canvas.style.transform = `rotate(${finalRotationDegrees}deg)`;
 
-            // 使用 setTimeout 確保動畫完成後執行邏輯
             setTimeout(() => {
                 isSpinning = false;
                 spinButton.disabled = false;
                 
-                // 計算最終停止時，轉盤相對於指針的實際角度 (0-360度)
-                // 指針在 0 度，轉盤轉動 `finalRotationDegrees` 度後，
-                // 我們要看指針指向哪個區塊。
-                // 實際的轉盤停止角度 (模 360)
                 let actualStopAngle = finalRotationDegrees % 360;
                 if (actualStopAngle < 0) actualStopAngle += 360;
 
-                // 找到與 `actualStopAngle` 對應的區塊
-                let winningIndex = -1;
-                let currentAngleForWinningCheck = 0; // 以 0 度為起始，順時針計算
+                let winningEntryId = null; 
+                let pointerRelativeAngle = (360 - actualStopAngle + 360) % 360; 
+
                 for (let i = 0; i < sectorData.length; i++) {
                     const sector = sectorData[i];
-                    // 指針指向 0 度，我們要找到 0 度落在哪個扇區的範圍內
-                    // 注意：扇區範圍是 [start, end)
-                    // 如果指針指向 0 度，那麼我們需要找到一個扇區，其範圍包含 (360 - actualStopAngle + 0) % 360
-                    // 這裡的邏輯是反過來的：我們知道轉盤最終停在哪個絕對角度，
-                    // 然後看這個絕對角度與每個區塊的相對位置。
-                    // 為了方便判斷，我們可以將指針的「0度」位置看作是目標區塊的中點。
-                    // 或者，更直接地，將 `actualStopAngle` 進行偏移，使其與扇區的繪製角度基準一致。
-                    
-                    // 最簡單的方式是：將 `actualStopAngle` 逆轉回來，看它落在哪個區塊的範圍內。
-                    // 因為轉盤是逆時針旋轉的，所以指針指向的是轉盤的 "actualStopAngle" 角度。
-                    // 但是我們的扇區是從指針位置 (0度) 順時針繪製的。
-                    // 所以我們需要計算出指針所指的「相對扇區角度」。
-                    
-                    // 指針的絕對位置是 0 度 (正上方)。
-                    // 轉盤最終停在 `actualStopAngle` 度。
-                    // 我們需要將 `actualStopAngle` 反轉過來，才能與扇區的順時針角度對應。
-                    // 例如，轉盤轉了 315 度，停在 315 度。指針在 0 度。
-                    // 那麼指針其實是落在轉盤的 (0 - 315) = -315 = 45 度位置。
-                    // 因此，指針所指的相對角度是 (360 - actualStopAngle) % 360。
-                    let pointerRelativeAngle = (360 - actualStopAngle + 360) % 360; // 確保為正值
-
                     if (pointerRelativeAngle >= sector.start && pointerRelativeAngle < sector.end) {
-                        winningIndex = sector.index;
+                        winningEntryId = sector.originalEntryId;
                         break;
                     }
                 }
+                
+                // 找到中獎區塊在原始 `entries` 中的索引
+                const winningEntryOriginalIndex = entries.findIndex(e => e.id === winningEntryId);
 
-                const resultText = entries[winningIndex].text;
+                // === 處理卡片效果結束與恢復 ===
+                // 先恢復原始狀態
+                entries = JSON.parse(JSON.stringify(originalEntriesState));
+                drawWheel(); // 繪製恢復後的轉盤
 
-                highlightSlice(winningIndex);
-                lastHighlightedSliceIndex = winningIndex;
+                // 重置卡片 inUse 狀態和相關變數
+                cards.boost.inUse = false;
+                cards.boost.boostedEntryId = null;
+                cards.boost.originalBoostedValue = 0;
 
-                showResultModal(resultText);
-                throwConfetti();
+                cards.remove.inUse = false;
+                cards.remove.removedEntryId = null;
+                cards.remove.originalRemovedValue = 0;
 
-                // 更新 currentRotationOffset 為實際停止的絕對角度，用於下一次旋轉的起始點
+                const resultText = entries[winningEntryOriginalIndex].text; 
+
+                highlightSlice(winningEntryOriginalIndex);
+                lastHighlightedSliceIndex = winningEntryOriginalIndex;
+
+                // === 處理重啟轉動卡效果 ===
+                if (cards.respin.inUse) {
+                    finalResultText.textContent = `您抽中了：『${resultText}』！\n是否使用『重啟轉動卡』再轉一次？`;
+                    modalConfirmButton.textContent = '再轉一次';
+                    modalConfirmButton.onclick = () => {
+                        closeModal(); 
+                        spinWheel();  
+                        cards.respin.inUse = false; // 重啟轉動卡在點擊「再轉一次」後才算完全消耗
+                        updateCardUI(); 
+                        modalConfirmButton.textContent = '確認'; 
+                        modalConfirmButton.onclick = closeModal; 
+                    };
+                    showResultModal(resultText); 
+                } else {
+                    showResultModal(resultText);
+                    throwConfetti();
+                }
+                // === 重啟轉動卡效果結束 ===
+
                 currentRotationOffset = actualStopAngle; 
                 canvas.style.transform = `rotate(${currentRotationOffset}deg)`;
-                canvas.style.transition = 'none'; // 移除 transition 樣式，防止回到原始狀態
+                canvas.style.transition = 'none'; 
                 
-            }, spinDuration * 1000);
+                updateCardUI(); // 確保所有卡片按鈕狀態更新
+                updateCardTargetSelects(); // 更新下拉選單以反映最新entries
+                
+            }, spinDuration * 1000); 
         }
 
         function highlightSlice(index) {
@@ -786,41 +983,295 @@
 
         function closeModal() {
             resultModal.style.display = 'none';
+            modalConfirmButton.textContent = '確認';
+            modalConfirmButton.onclick = closeModal;
         }
 
+        // === 卡片功能相關函數 ===
+
+        // 保存當前 entries 的副本作為原始狀態
+        function saveOriginalEntriesState() {
+            originalEntriesState = JSON.parse(JSON.stringify(entries));
+        }
+
+        // 統一更新所有卡片相關的選擇列表
+        function updateCardTargetSelects() {
+            updateBoostTargetSelect();
+            updateRemoveTargetSelect();
+        }
+
+        // 更新卡片 UI (數量和按鈕禁用狀態)
+        function updateCardUI() {
+            respinCardCountSpan.textContent = cards.respin.count;
+            boostCardCountSpan.textContent = cards.boost.count;
+            removeCardCountSpan.textContent = cards.remove.count;
+            
+            const respinButton = document.querySelector('#respinCard .card-use-button');
+            const boostButton = document.querySelector('#boostCard .card-use-button');
+            const removeButton = document.querySelector('#removeCard .card-use-button');
+
+            // 總體禁用邏輯：如果正在旋轉，則禁用所有卡片
+            if (isSpinning) {
+                respinButton.disabled = true;
+                boostButton.disabled = true;
+                removeButton.disabled = true;
+                return; // 如果正在旋轉，直接返回，不執行後續特定卡片的禁用邏輯
+            }
+
+            // 個別卡片禁用邏輯：
+            // 1. 卡片數量為 0
+            // 2. 有其他卡片正在使用 (防止同時啟用多個效果)
+            respinButton.disabled = cards.respin.count === 0 || cards.boost.inUse || cards.remove.inUse;
+            boostButton.disabled = cards.boost.count === 0 || cards.respin.inUse || cards.remove.inUse;
+            removeButton.disabled = cards.remove.count === 0 || cards.respin.inUse || cards.boost.inUse;
+        }
+
+        // 重置所有卡片數量和狀態
+        function resetCards() {
+            cards.respin.count = 1;
+            cards.respin.inUse = false;
+            
+            cards.boost.count = 1;
+            cards.boost.inUse = false;
+            cards.boost.boostedEntryId = null;
+            cards.boost.originalBoostedValue = 0;
+            boostTargetSelectionDiv.style.display = 'none';
+
+            cards.remove.count = 1;
+            cards.remove.inUse = false;
+            cards.remove.removedEntryId = null;
+            cards.remove.originalRemovedValue = 0;
+            removeTargetSelectionDiv.style.display = 'none';
+
+            // 將 entries 恢復到最近一次保存的原始狀態 (在任何卡片使用前或在新增/刪除區域後)
+            entries = JSON.parse(JSON.stringify(originalEntriesState));
+            drawWheel(); 
+            updateCardUI(); 
+            updateCardTargetSelects(); // 重置後，也更新下拉選單
+            alert("所有功能卡片已重置！");
+        }
+
+
+        // --- 重啟轉動卡 ---
+        function useRespinCard() {
+            if (cards.respin.count > 0 && !isSpinning && !cards.boost.inUse && !cards.remove.inUse) {
+                cards.respin.inUse = true;
+                cards.respin.count--; // 立即減少卡片數量
+                updateCardUI();
+                alert("您已使用『重啟轉動卡』，下次轉動後將有機會再轉一次！");
+            } else if (cards.respin.count === 0) {
+                 alert("『重啟轉動卡』已使用完畢！請點擊『重置卡片』恢復。");
+            } else {
+                 alert("請等待當前操作結束或轉盤停止，或有其他卡片正在使用。");
+            }
+        }
+
+        // --- 機率提升卡 ---
+        function updateBoostTargetSelect() {
+            boostTargetSelect.innerHTML = ''; 
+            // 篩選出當前可供選擇的區塊（未被刪除卡移除的）
+            const availableEntries = entries.filter(entry => entry.value > 0);
+            availableEntries.forEach(entry => {
+                const option = document.createElement('option');
+                option.value = entry.id;
+                option.textContent = entry.text || `區域 ${entry.id.split('-').pop()}`;
+                boostTargetSelect.appendChild(option);
+            });
+            document.querySelector('#boostTargetSelection button:first-of-type').disabled = availableEntries.length === 0;
+        }
+
+        function useBoostCard() {
+            if (cards.boost.count > 0 && !isSpinning && !cards.respin.inUse && !cards.remove.inUse) {
+                const availableEntries = entries.filter(entry => entry.value > 0);
+                if (availableEntries.length === 0) {
+                    alert("沒有可提升機率的區域，請確認轉盤設定。");
+                    return;
+                }
+
+                cards.boost.inUse = true;
+                cards.boost.count--; // 立即減少卡片數量
+                
+                boostTargetSelectionDiv.style.display = 'block';
+                updateBoostTargetSelect(); 
+                updateCardUI(); 
+            } else if (cards.boost.count === 0) {
+                alert("『機率提升卡』已使用完畢！請點擊『重置卡片』恢復。");
+            } else {
+                alert("請等待當前操作結束或轉盤停止，或有其他卡片正在使用。");
+            }
+        }
+
+        function applyBoost() {
+            const selectedId = boostTargetSelect.value;
+            if (!selectedId) {
+                alert("請選擇一個區域來提升機率！");
+                return;
+            }
+
+            cards.boost.boostedEntryId = selectedId;
+            const entry = entries.find(e => e.id === cards.boost.boostedEntryId);
+            if (entry) {
+                cards.boost.originalBoostedValue = entry.value; // 儲存原始值
+                entry.value *= 2; // 提升機率 (倍數可以自訂)
+                drawWheel(); 
+            }
+            
+            boostTargetSelectionDiv.style.display = 'none'; 
+            updateCardUI(); 
+            alert(`您已使用『機率提升卡』，區域 "${entry ? entry.text : '未知'}" 的機率已提升！\n此次旋轉結束後將恢復。`);
+        }
+
+        function cancelBoost() {
+            // 如果取消，將卡片數量恢復
+            if (cards.boost.inUse) {
+                cards.boost.count++; 
+            }
+            cards.boost.inUse = false; 
+            if (cards.boost.boostedEntryId && cards.boost.originalBoostedValue > 0) {
+                const entry = entries.find(e => e.id === cards.boost.boostedEntryId);
+                if (entry) {
+                    entry.value = cards.boost.originalBoostedValue; // 恢復原始值
+                }
+            }
+            cards.boost.boostedEntryId = null; 
+            cards.boost.originalBoostedValue = 0;
+            drawWheel(); 
+            boostTargetSelectionDiv.style.display = 'none'; 
+            updateCardUI(); 
+        }
+
+        // --- 刪除區塊卡 ---
+        function updateRemoveTargetSelect() {
+            removeTargetSelect.innerHTML = '';
+            // 篩選出當前可供選擇的區塊（未被提升卡影響，且非當前被移除的，且確保移除後仍有至少一個可抽獎區塊）
+            const availableEntries = entries.filter(entry => {
+                // 不能是當前已經被移除的區塊（儘管卡片設計是單次，但以防萬一）
+                if (entry.id === cards.remove.removedEntryId) return false;
+                // 排除被 boost 提升的區塊，避免衝突
+                if (entry.id === cards.boost.boostedEntryId) return false;
+                
+                // 確保移除後至少還剩下一個 value > 0 的區塊可供抽獎
+                const tempEntries = JSON.parse(JSON.stringify(entries)); // 複製一份
+                const tempRemovedIndex = tempEntries.findIndex(e => e.id === entry.id);
+                if (tempRemovedIndex > -1) {
+                    tempEntries[tempRemovedIndex].value = 0; // 模擬移除
+                }
+                const remainingActive = tempEntries.filter(e => e.value > 0);
+                return remainingActive.length > 0;
+            });
+            
+            availableEntries.forEach(entry => {
+                const option = document.createElement('option');
+                option.value = entry.id;
+                option.textContent = entry.text || `區域 ${entry.id.split('-').pop()}`;
+                removeTargetSelect.appendChild(option);
+            });
+            document.querySelector('#removeTargetSelection button:first-of-type').disabled = availableEntries.length === 0;
+        }
+
+        function useRemoveCard() {
+            if (cards.remove.count > 0 && !isSpinning && !cards.respin.inUse && !cards.boost.inUse) {
+                // 確保有足夠的區塊可以移除，至少需要2個活著的區塊
+                const activeEntriesCount = entries.filter(e => e.value > 0).length;
+                if (activeEntriesCount < 2) {
+                    alert("至少需要兩個有效的轉盤區域才能使用『刪除區塊卡』。");
+                    return;
+                }
+
+                cards.remove.inUse = true;
+                cards.remove.count--; // 立即減少卡片數量
+
+                removeTargetSelectionDiv.style.display = 'block';
+                updateRemoveTargetSelect(); 
+                updateCardUI(); 
+            } else if (cards.remove.count === 0) {
+                 alert("『刪除區塊卡』已使用完畢！請點擊『重置卡片』恢復。");
+            } else {
+                 alert("請等待當前操作結束或轉盤停止，或有其他卡片正在使用。");
+            }
+        }
+
+        function applyRemove() {
+            const selectedId = removeTargetSelect.value;
+            if (!selectedId) {
+                alert("請選擇一個區域來移除！");
+                return;
+            }
+
+            cards.remove.removedEntryId = selectedId;
+            const entry = entries.find(e => e.id === cards.remove.removedEntryId);
+            if (entry) {
+                cards.remove.originalRemovedValue = entry.value; // 儲存原始值
+                entry.value = 0; // 將該區塊的權重設為0，使其不被抽中，也不參與繪製
+                drawWheel(); // 重新繪製轉盤，空白區域會消失，其他區域重新分配空間
+            }
+            
+            removeTargetSelectionDiv.style.display = 'none'; 
+            updateCardUI(); 
+            alert(`您已使用『刪除區塊卡』，區域 "${entry ? entry.text : '未知'}" 已暫時移除！\n此次旋轉結束後將恢復。`);
+        }
+
+        function cancelRemove() {
+            // 如果取消，將卡片數量恢復
+            if (cards.remove.inUse) {
+                cards.remove.count++; 
+            }
+            cards.remove.inUse = false; 
+            if (cards.remove.removedEntryId && cards.remove.originalRemovedValue > 0) {
+                const entry = entries.find(e => e.id === cards.remove.removedEntryId);
+                if (entry) {
+                    entry.value = cards.remove.originalRemovedValue; // 恢復原始值
+                }
+            }
+            cards.remove.removedEntryId = null; 
+            cards.remove.originalRemovedValue = 0;
+            drawWheel(); 
+            removeTargetSelectionDiv.style.display = 'none'; 
+            updateCardUI(); 
+        }
+
+        // === 卡片功能相關函數結束 ===
+
+
+        // 初始化轉盤區域
         function initializeEntries() {
+            entries = []; 
+            entriesContainer.innerHTML = ''; 
+
             addEntry('恭喜發財', 20);
             addEntry('事事順利', 30);
             addEntry('學業進步', 25);
             addEntry('天天開心', 25);
+            
+            saveOriginalEntriesState(); // 第一次初始化時保存原始狀態
+            updateCardUI(); 
         }
 
+        // 事件監聽器
         spinButton.addEventListener('click', spinWheel);
+
         window.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && resultModal.style.display === 'flex') {
                 closeModal();
             }
         });
+
         window.addEventListener('click', (event) => {
-            if (event.target === resultModal) {
-                closeModal();
-            }
-            // 避免點擊模態框內容關閉模態框
-            if (event.target === resultModal && event.target !== document.getElementById('finalResultText') && event.target !== document.querySelector('.modal-button')) {
+            if (event.target === resultModal) { 
                 closeModal();
             }
         });
-
 
         window.addEventListener('resize', () => {
             setCanvasDimensions();
             drawWheel();
+            updateCardTargetSelects(); 
         });
 
         // 頁面加載完成後執行初始化
         window.onload = () => {
-            setCanvasDimensions();
-            initializeEntries();
+            setCanvasDimensions(); 
+            initializeEntries(); 
         };
     </script>
 
